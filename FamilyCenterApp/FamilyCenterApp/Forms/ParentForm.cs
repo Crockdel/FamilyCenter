@@ -114,6 +114,59 @@ namespace FamilyCenterApp.WinForms.Forms
             mainPanel.Controls.Add(cbRightsStatus);
             yPos += 70;
 
+            // В методе InitializeComponent, после добавления всех полей ввода
+            // Добавляем кнопку просмотра детей
+            Button btnViewChildren = new Button
+            {
+                Text = "👪 Дети этого родителя",
+                Location = new Point(labelWidth + 10, yPos),
+                Size = new Size(controlWidth, 35),
+                BackColor = Color.FromArgb(52, 152, 219),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10F)
+            };
+            btnViewChildren.Click += (s, e) =>
+            {
+                if (_editingParent != null)
+                {
+                    var form = new ParentChildrenForm(_repository, _editingParent);
+                    form.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show("Сначала сохраните родителя", "Внимание",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            };
+            mainPanel.Controls.Add(btnViewChildren);
+            yPos += 50;
+
+            // Кнопки сохранения и отмены (если их ещё нет)
+            btnSave = new Button
+            {
+                Text = "Сохранить",
+                Location = new Point(labelWidth + 10, yPos),
+                Size = new Size(120, 35),
+                BackColor = Color.FromArgb(46, 204, 113),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnSave.Click += BtnSave_Click;
+            mainPanel.Controls.Add(btnSave);
+
+            btnCancel = new Button
+            {
+                Text = "Отмена",
+                Location = new Point(labelWidth + 140, yPos),
+                Size = new Size(120, 35),
+                BackColor = Color.FromArgb(149, 165, 166),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnCancel.Click += (s, e) => this.Close();
+            mainPanel.Controls.Add(btnCancel);
+
             // Кнопки
             btnSave = new Button
             {

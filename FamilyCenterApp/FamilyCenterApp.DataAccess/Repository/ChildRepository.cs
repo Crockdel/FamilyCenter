@@ -18,14 +18,24 @@ namespace FamilyCenterApp.DataAccess.Repositories
         {
             var children = new List<Child>();
             string sql = @"SELECT id, last_name, first_name, patronymic, birth_date, 
-                                  legal_status, admission_date, notes 
-                           FROM children ORDER BY last_name, first_name";
+                          legal_status, admission_date, notes 
+                   FROM children ORDER BY last_name, first_name";
 
             using (var reader = DatabaseHelper.ExecuteReader(sql))
             {
                 while (reader.Read())
                 {
-                    children.Add(MapToChild(reader));
+                    children.Add(new Child
+                    {
+                        Id = reader.GetInt32("id"),
+                        LastName = reader.GetString("last_name"),
+                        FirstName = reader.GetString("first_name"),
+                        Patronymic = reader.IsDBNull(reader.GetOrdinal("patronymic")) ? null : reader.GetString("patronymic"),
+                        BirthDate = reader.GetDateTime("birth_date"),
+                        LegalStatus = reader.GetString("legal_status"),
+                        AdmissionDate = reader.GetDateTime("admission_date"),
+                        Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? null : reader.GetString("notes")
+                    });
                 }
             }
             return children;
@@ -143,11 +153,13 @@ namespace FamilyCenterApp.DataAccess.Repositories
                 Id = reader.GetInt32("id"),
                 LastName = reader.GetString("last_name"),
                 FirstName = reader.GetString("first_name"),
-                Patronymic = reader.GetString("patronymic"),
+                // Исправляем обработку NULL для patronymic
+                Patronymic = reader.IsDBNull(reader.GetOrdinal("patronymic")) ? null : reader.GetString("patronymic"),
                 BirthDate = reader.GetDateTime("birth_date"),
                 LegalStatus = reader.GetString("legal_status"),
                 AdmissionDate = reader.GetDateTime("admission_date"),
-                Notes = reader.GetString("notes")
+                // Исправляем обработку NULL для notes
+                Notes = reader.IsDBNull(reader.GetOrdinal("notes")) ? null : reader.GetString("notes")
             };
         }
     }

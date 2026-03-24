@@ -104,10 +104,22 @@
     <Compile Include="Forms\ChildForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ChildParentsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FosterArrangementsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FosterParentChildrenForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FosterParentForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ParentChildrenForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\ParentForm.cs">

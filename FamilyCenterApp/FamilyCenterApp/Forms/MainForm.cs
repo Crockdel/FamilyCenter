@@ -260,8 +260,49 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             var card = new RecordCard();
             string title = child.FullName;
+
+            // Получаем кровных родителей с обработкой ошибок
+            string parentsInfo = "Родители: не указаны";
+            string fosterInfo = "Приёмная семья: не устроен";
+
+            try
+            {
+                var childParentRepo = new ChildParentRepository();
+                var parents = childParentRepo.GetParentsByChildId(child.Id);
+                if (parents != null && parents.Count > 0)
+                {
+                    var parentNames = parents.Select(p =>
+                    {
+                        string name = p.FullName;
+                        return string.IsNullOrEmpty(name) ? "неизвестно" : name;
+                    });
+                    parentsInfo = $"Родители: {string.Join(", ", parentNames)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                parentsInfo = "Родители: ошибка загрузки";
+            }
+
+            try
+            {
+                var arrangementRepo = new FosterArrangementRepository();
+                var arrangements = arrangementRepo.GetByChildId(child.Id);
+                var activeArrangements = arrangements?.Where(a => a.Status == "действует").ToList();
+                if (activeArrangements != null && activeArrangements.Count > 0)
+                {
+                    var fosterNames = activeArrangements.Select(a => a.FosterParentName ?? "неизвестно");
+                    fosterInfo = $"Приёмная семья: {string.Join(", ", fosterNames)}";
+                }
+            }
+            catch (Exception ex)
+            {
+                fosterInfo = "Приёмная семья: ошибка загрузки";
+            }
+
             string subtitle = $"Возраст: {child.Age} лет | Статус: {child.LegalStatus}";
-            string details = $"Дата поступления: {child.AdmissionDate:dd.MM.yyyy}";
+            string details = $"{parentsInfo}\n{fosterInfo}\nДата поступления: {child.AdmissionDate:dd.MM.yyyy}";
+
             if (!string.IsNullOrEmpty(child.Notes))
                 details += $"\n{child.Notes}";
 
@@ -305,6 +346,27 @@ namespace FamilyCenterApp.WinForms.Forms
             card.TagData = foster;
             card.EditClicked += (s, e) => EditFosterParent(foster);
             card.DeleteClicked += (s, e) => DeleteFosterParent(foster);
+
+            // Добавляем двойной клик для просмотра детей
+            card.DoubleClick += (s, e) =>
+            {
+                var arrangementRepo = new FosterArrangementRepository();
+                var children = arrangementRepo.GetByFosterParentId(foster.Id);
+                if (children.Count > 0)
+                {
+                    string message = $"Дети в семье {foster.FullName}:\n\n";
+                    foreach (var child in children)
+                    {
+                        message += $"• {child.ChildName} - {child.ArrangementType} (с {child.StartDate:dd.MM.yyyy})\n";
+                    }
+                    MessageBox.Show(message, "Дети в семье", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show($"В семье {foster.FullName} нет детей", "Информация",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            };
 
             return card;
         }

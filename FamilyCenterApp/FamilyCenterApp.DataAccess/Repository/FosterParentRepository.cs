@@ -132,9 +132,9 @@ namespace FamilyCenterApp.DataAccess.Repositories
                 Id = reader.GetInt32("id"),
                 LastName = reader.GetString("last_name"),
                 FirstName = reader.GetString("first_name"),
-                Patronymic = reader.GetString("patronymic"),
-                BirthDate = reader.GetDateTime("birth_date"),
-                Phone = reader.GetString("phone"),
+                Patronymic = reader.IsDBNull(reader.GetOrdinal("patronymic")) ? null : reader.GetString("patronymic"),
+                BirthDate = reader.IsDBNull(reader.GetOrdinal("birth_date")) ? (DateTime?)null : reader.GetDateTime("birth_date"),
+                Phone = reader.IsDBNull(reader.GetOrdinal("phone")) ? null : reader.GetString("phone"),
                 Status = reader.GetString("status")
             };
         }

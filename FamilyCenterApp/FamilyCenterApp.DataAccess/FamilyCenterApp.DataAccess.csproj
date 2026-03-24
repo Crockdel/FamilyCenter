@@ -92,10 +92,14 @@
   <ItemGroup>
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="Models\Child.cs" />
+    <Compile Include="Models\ChildParent.cs" />
+    <Compile Include="Models\FosterArrangement.cs" />
     <Compile Include="Models\FosterParent.cs" />
     <Compile Include="Models\Parent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\ChildParentRepository.cs" />
     <Compile Include="Repository\ChildRepository.cs" />
+    <Compile Include="Repository\FosterArrangementRepository.cs" />
     <Compile Include="Repository\FosterParentRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\ParentRepository.cs" />

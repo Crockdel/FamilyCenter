@@ -124,6 +124,48 @@ namespace FamilyCenterApp.WinForms.Forms
             mainPanel.Controls.Add(tbNotes);
             yPos += 95;
 
+            // Кнопка для кровных родителей
+            Button btnViewParents = new Button
+            {
+                Text = "👪 Кровные родители",
+                Location = new Point(labelWidth + 10, yPos),
+                Size = new Size(controlWidth, 35),
+                BackColor = Color.FromArgb(155, 89, 182),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnViewParents.Click += (s, e) =>
+            {
+                var form = new ChildParentsForm(_editingChild ?? new Child { Id = _repository.GetAll().FirstOrDefault()?.Id ?? 0, LastName = "", FirstName = "" });
+                // Нужно передать правильного ребёнка
+                if (_editingChild != null)
+                    new ChildParentsForm(_editingChild).ShowDialog();
+                else
+                    MessageBox.Show("Сначала сохраните ребёнка", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            };
+            mainPanel.Controls.Add(btnViewParents);
+            yPos += 50;
+
+            // Кнопка для приёмных семей
+            Button btnViewFamilies = new Button
+            {
+                Text = "🏠 Приёмные семьи",
+                Location = new Point(labelWidth + 10, yPos),
+                Size = new Size(controlWidth, 35),
+                BackColor = Color.FromArgb(52, 152, 219),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
+            };
+            btnViewFamilies.Click += (s, e) =>
+            {
+                if (_editingChild != null)
+                    new FosterArrangementsForm(_editingChild).ShowDialog();
+                else
+                    MessageBox.Show("Сначала сохраните ребёнка", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            };
+            mainPanel.Controls.Add(btnViewFamilies);
+            yPos += 50;
+
             // Кнопки
             btnSave = new Button
             {
