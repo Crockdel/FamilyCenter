@@ -33,6 +33,10 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             _repository = repository;
             _editingFoster = foster;
+
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+
             InitializeComponent();
             LoadDataToForm();
         }
@@ -41,9 +45,9 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             this.Text = _editingFoster == null ? "Добавление приёмного родителя" : "Редактирование приёмного родителя";
             this.StartPosition = FormStartPosition.CenterParent;
-            this.Size = new Size(450, 420);
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
+            this.MinimumSize = new Size(450, 480);
+            this.MaximumSize = new Size(800, 650);
+            this.FormBorderStyle = FormBorderStyle.Sizable;
             this.BackColor = Color.White;
 
             Panel mainPanel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(20) };

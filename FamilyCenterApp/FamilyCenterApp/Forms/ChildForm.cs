@@ -33,6 +33,11 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             _repository = repository;
             _editingChild = child;
+
+            // Включаем масштабирование
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+
             InitializeComponent();
             LoadDataToForm();
         }
@@ -41,7 +46,8 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             this.Text = _editingChild == null ? "Добавление ребёнка" : "Редактирование ребёнка";
             this.StartPosition = FormStartPosition.CenterParent;
-            this.Size = new Size(450, 480);
+            this.MinimumSize = new Size(450, 550);
+            this.MaximumSize = new Size(800, 800);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.BackColor = Color.White;

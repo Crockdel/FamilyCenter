@@ -40,7 +40,7 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             this.Text = $"Приёмные семьи - {_child.FullName}";
             this.StartPosition = FormStartPosition.CenterParent;
-            this.Size = new Size(600, 500);
+            this.Size = new Size(605, 575);
             this.BackColor = Color.White;
 
             // Заголовок

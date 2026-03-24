@@ -15,29 +15,31 @@ namespace FamilyCenterApp.WinForms.Forms
 {
     public partial class MainForm : Form
     {
-        // Репозитории для работы с данными
         private readonly ChildRepository _childRepository;
         private readonly ParentRepository _parentRepository;
         private readonly FosterParentRepository _fosterParentRepository;
 
-        // Элементы управления
         private ComboBox cbTableSelector;
         private TextBox tbSearch;
         private Button btnSearch;
         private Button btnAdd;
         private FlowLayoutPanel flowPanelCards;
         private Label lblStatus;
+        private Panel headerPanel;
+        private Panel filterPanel;
 
-        // Текущая выбранная таблица
         private enum TableType { Children, Parents, FosterParents }
         private TableType _currentTable = TableType.Children;
 
         public MainForm()
         {
-            // Инициализация репозиториев
             _childRepository = new ChildRepository();
             _parentRepository = new ParentRepository();
             _fosterParentRepository = new FosterParentRepository();
+
+            // Включаем автоматическое масштабирование
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
 
             InitializeComponent();
             LoadData();
@@ -47,15 +49,16 @@ namespace FamilyCenterApp.WinForms.Forms
         {
             this.Text = "Семейный центр - Управление данными";
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.Size = new Size(1000, 700);
+            this.MinimumSize = new Size(895, 620);
             this.BackColor = Color.FromArgb(236, 240, 241);
 
-            // Верхняя панель
-            Panel headerPanel = new Panel
+            // Верхняя панель (заголовок)
+            headerPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 60,
-                BackColor = Color.FromArgb(52, 73, 94)
+                Height = 70,
+                BackColor = Color.FromArgb(52, 73, 94),
+                MinimumSize = new Size(0, 70)
             };
 
             Label lblTitle = new Label
@@ -63,36 +66,39 @@ namespace FamilyCenterApp.WinForms.Forms
                 Text = "Семейный центр \"Мой семейный центр\"",
                 Font = new Font("Segoe UI", 16F, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(20, 15),
-                AutoSize = true
+                AutoSize = true,
+                Location = new Point(20, 20)
             };
             headerPanel.Controls.Add(lblTitle);
+            lblTitle.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             // Панель фильтров
-            Panel filterPanel = new Panel
+            filterPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 55,
+                Height = 60,
                 BackColor = Color.White,
-                Padding = new Padding(10)
+                Padding = new Padding(10),
+                MinimumSize = new Size(0, 60)
             };
 
             // Выбор таблицы
             Label lblTable = new Label
             {
                 Text = "Таблица:",
-                Location = new Point(15, 18),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 10F)
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(15, 20)
             };
             filterPanel.Controls.Add(lblTable);
+            lblTable.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             cbTableSelector = new ComboBox
             {
-                Location = new Point(80, 15),
                 Size = new Size(150, 28),
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                Font = new Font("Segoe UI", 10F)
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(80, 17)
             };
             cbTableSelector.Items.AddRange(new[] { "Дети", "Кровные родители", "Приёмные родители" });
             cbTableSelector.SelectedIndex = 0;
@@ -102,50 +108,62 @@ namespace FamilyCenterApp.WinForms.Forms
                 LoadData();
             };
             filterPanel.Controls.Add(cbTableSelector);
+            cbTableSelector.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             // Поиск
             Label lblSearch = new Label
             {
                 Text = "Поиск:",
-                Location = new Point(260, 18),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 10F)
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(260, 20)
             };
             filterPanel.Controls.Add(lblSearch);
+            lblSearch.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             tbSearch = new TextBox
             {
-                Location = new Point(320, 15),
                 Size = new Size(200, 27),
-                Font = new Font("Segoe UI", 10F)
+                Font = new Font("Segoe UI", 10F),
+                Location = new Point(320, 17)
             };
             tbSearch.KeyDown += (s, e) => { if (e.KeyCode == Keys.Enter) LoadData(); };
             filterPanel.Controls.Add(tbSearch);
+            tbSearch.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             btnSearch = new Button
             {
                 Text = "Найти",
-                Location = new Point(530, 14),
                 Size = new Size(90, 30),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Location = new Point(530, 15)
             };
             btnSearch.Click += (s, e) => LoadData();
             filterPanel.Controls.Add(btnSearch);
+            btnSearch.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 
             btnAdd = new Button
             {
                 Text = "+ Добавить",
-                Location = new Point(890, 14),
-                Size = new Size(90, 30),
+                Size = new Size(100, 30),
                 BackColor = Color.FromArgb(46, 204, 113),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold)
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Location = new Point(0, 15)
             };
             btnAdd.Click += BtnAdd_Click;
             filterPanel.Controls.Add(btnAdd);
+            btnAdd.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+
+            // Настраиваем кнопку "Добавить" для привязки к правому краю
+            btnAdd.Location = new Point(filterPanel.Width - 120, 15);
+            filterPanel.Resize += (s, e) =>
+            {
+                btnAdd.Location = new Point(filterPanel.Width - 120, 15);
+            };
 
             // Панель карточек
             flowPanelCards = new FlowLayoutPanel
@@ -153,7 +171,15 @@ namespace FamilyCenterApp.WinForms.Forms
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
                 Padding = new Padding(15),
-                BackColor = Color.FromArgb(236, 240, 241)
+                BackColor = Color.FromArgb(236, 240, 241),
+                WrapContents = true,
+                AutoSize = false
+            };
+            // Настраиваем автоматическое перераспределение карточек при изменении размера
+            flowPanelCards.Resize += (s, e) =>
+            {
+                // Обновляем расположение карточек
+                flowPanelCards.PerformLayout();
             };
 
             // Статусная строка
@@ -163,13 +189,23 @@ namespace FamilyCenterApp.WinForms.Forms
                 Height = 30,
                 BackColor = Color.FromArgb(189, 195, 199),
                 TextAlign = ContentAlignment.MiddleLeft,
-                Padding = new Padding(10, 0, 0, 0)
+                Padding = new Padding(10, 0, 0, 0),
+                Font = new Font("Segoe UI", 9F)
             };
 
             this.Controls.Add(flowPanelCards);
             this.Controls.Add(filterPanel);
             this.Controls.Add(headerPanel);
             this.Controls.Add(lblStatus);
+
+            // Обработчик изменения размера формы
+            this.Resize += MainForm_Resize;
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            // Обновляем расположение карточек при изменении размера окна
+            flowPanelCards.PerformLayout();
         }
 
         private void BtnAdd_Click(object sender, EventArgs e)
